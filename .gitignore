@@ -10,3 +10,6 @@ form_submissions.log
 Thumbs.db
 .vscode/
 .claude/
+
+# Secrets (clé reCAPTCHA) — voir config.example.php
+config.php
