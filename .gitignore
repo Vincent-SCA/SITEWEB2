@@ -1,0 +1,12 @@
+# Logs générés à l'exécution
+form_submissions.log
+*.log
+
+# Dépendances Composer
+/vendor/
+
+# Fichiers système / éditeur
+.DS_Store
+Thumbs.db
+.vscode/
+.claude/

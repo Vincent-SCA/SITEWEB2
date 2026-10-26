@@ -1,0 +1,10 @@
+/* Inter — police variable (graisses 100 à 900 dans un seul fichier).
+   Rôle : interface et corps de texte (même fichier source que CAD2 Analytics).
+   Pas d'italique dédié — le navigateur synthétise une oblique au besoin. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('inter-var.woff2') format('woff2');
+}

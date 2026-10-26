@@ -1,0 +1,19 @@
+Options -Indexes
+RewriteEngine On
+
+# Redirect .html and .php URLs to clean URLs (301 permanent)
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.(html|php)[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Internally serve .html file when clean URL is requested
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
+# Internally serve .php file when clean URL is requested
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]
