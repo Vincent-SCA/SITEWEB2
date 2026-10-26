@@ -360,6 +360,7 @@ button { cursor: pointer; }
 /* ───────────── 6. CADEALER 2 — MODULE F&I ───────────── */
 .fi { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-16); align-items: start; }
 .fi h2 + .lede { margin-top: var(--space-4); }
+.fi-photo { margin-top: var(--space-8); width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 35% center; border-radius: var(--radius-md); }
 .fi-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-4); }
 .fi-steps li { display: grid; grid-template-columns: 36px 1fr; gap: var(--space-4); }
 .fi-num { width: 36px; height: 36px; border-radius: 50%; background: var(--teal); color: #fff; font-family: var(--font-display); font-weight: 700; display: grid; place-items: center; }
