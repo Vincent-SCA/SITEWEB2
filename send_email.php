@@ -34,7 +34,10 @@ if (!empty($_POST['website'])) {
 }
 
 // Anti-robot : soumission en moins de 3 secondes après le chargement.
-if (!isset($_POST['form_time']) || time() - (int)$_POST['form_time'] < 3) {
+// form_time vient de l'horloge du visiteur (js/form.js) : une différence négative
+// signifie une horloge en avance, pas une soumission trop rapide.
+$elapsed = isset($_POST['form_time']) ? time() - (int)$_POST['form_time'] : 0;
+if (!isset($_POST['form_time']) || ($elapsed >= 0 && $elapsed < 3)) {
     fail('Soumission trop rapide, veuillez réessayer.');
 }
 

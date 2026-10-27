@@ -135,30 +135,31 @@ button { cursor: pointer; }
 }
 
 /* ───────────── 4. HEADER ───────────── */
-/* Réserve la hauteur tant que includeHeader.js n'a pas injecté le header :
-   évite le saut de mise en page à l'arrivée.
+/* Header marine (#001952 = --navy), texte clair, logo blanc.
+   Réserve la hauteur (et la couleur) tant que includeHeader.js n'a pas injecté
+   le header : évite le saut de mise en page et le flash blanc à l'arrivée.
    Le sticky est sur le placeholder et non sur .site-header : un élément sticky
    ne colle que dans les limites de son parent, ici de la même hauteur que lui. */
-#header-placeholder { min-height: var(--header-h); position: sticky; top: 0; z-index: 50; }
+#header-placeholder { min-height: var(--header-h); position: sticky; top: 0; z-index: 50; background: var(--navy); }
 
 .site-header {
   position: relative;
-  background: rgba(255,255,255,.88);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
+  background: var(--navy);
+  border-bottom: 1px solid rgba(255,255,255,.1);
 }
+.site-header :focus-visible { outline-color: #fff; }
 .header-inner { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); }
 .logo img { height: 40px; width: auto; }
 .nav { display: flex; align-items: center; gap: var(--space-8); }
-.nav a { color: var(--text-2); font-weight: 500; font-size: var(--text-sm); }
-.nav a:hover, .nav a[aria-current="page"] { color: var(--text); }
+.nav a { color: var(--on-dark-2); font-weight: 500; font-size: var(--text-sm); }
+.nav a:hover, .nav a[aria-current="page"] { color: #fff; }
 .header-actions { display: flex; align-items: center; gap: var(--space-6); }
-.phone { color: var(--text); font-weight: 600; font-size: var(--text-sm); display: inline-flex; align-items: center; gap: .45rem; }
+.phone { color: #fff; font-weight: 600; font-size: var(--text-sm); display: inline-flex; align-items: center; gap: .45rem; }
 .phone svg { color: var(--teal); }
 .menu-btn {
   display: none; align-items: center; justify-content: center;
   width: 42px; height: 42px;
-  background: none; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--text);
+  background: none; border: 1px solid rgba(255,255,255,.3); border-radius: var(--radius-sm); color: #fff;
 }
 .menu-btn svg { width: 22px; height: 22px; }
 .menu-btn .icon-close { display: none; }
@@ -171,10 +172,10 @@ button { cursor: pointer; }
   .site-header.open .nav {
     display: flex; flex-direction: column; align-items: stretch; gap: 0;
     position: absolute; left: 0; right: 0; top: 100%;
-    background: var(--bg); border-bottom: 1px solid var(--line);
+    background: var(--navy); border-bottom: 1px solid rgba(255,255,255,.1);
     padding: var(--space-2) 0;
   }
-  .site-header.open .nav a { padding: .9rem 1.25rem; border-bottom: 1px solid var(--line); }
+  .site-header.open .nav a { padding: .9rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.1); }
   .site-header.open .nav a:last-child { border-bottom: 0; }
   .header-actions .btn { padding: .7rem 1.1rem; }
 }
@@ -302,10 +303,18 @@ button { cursor: pointer; }
   grid-auto-columns: calc((100% - 2 * var(--space-4)) / 3);
   gap: var(--space-4);
   overflow-x: auto; scroll-snap-type: x mandatory;
-  scrollbar-width: none; padding-bottom: var(--space-2);
+  scrollbar-width: none;
+  /* overflow-x rogne aussi verticalement : on réserve la place du relief au survol
+     (montée de 3px + ombre) sans décaler la section. */
+  padding: 4px 0 var(--space-6); margin: -4px 0 calc(-1 * var(--space-6));
 }
 .testi-track::-webkit-scrollbar { display: none; }
-.testi { scroll-snap-align: start; padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); }
+.testi {
+  scroll-snap-align: start; padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6);
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+.testi:hover { transform: translateY(-3px); border-color: var(--teal); box-shadow: var(--shadow-card); }
+@media (prefers-reduced-motion: reduce) { .testi:hover { transform: none; } }
 .testi blockquote { margin: 0; font-size: var(--text-md); color: var(--text); flex: 1; }
 .testi blockquote::before { content: "“"; display: block; font-family: var(--font-display); font-size: 3rem; line-height: .6; color: var(--teal); margin-bottom: var(--space-4); }
 .testi footer { display: flex; align-items: center; gap: var(--space-3); }
@@ -358,15 +367,35 @@ button { cursor: pointer; }
 @media (max-width: 640px) { .features { grid-template-columns: 1fr; } .feature { padding: var(--space-6); } }
 
 /* ───────────── 6. CADEALER 2 — MODULE F&I ───────────── */
-.fi { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-16); align-items: start; }
+/* Photo fondue dans le fond de section, même recette que .hero-media sur l'accueil :
+   ancrée au bord gauche, masquée vers le texte (droite) et vers le titre (haut),
+   avec un léger voile couleur --bg-alt pour garder le titre lisible. */
+#fi { position: relative; overflow: hidden; }
+.fi { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-16); align-items: start; }
 .fi h2 + .lede { margin-top: var(--space-4); }
-.fi-photo { margin-top: var(--space-8); width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 35% center; border-radius: var(--radius-md); }
+.fi-media {
+  position: absolute; inset: 0 auto 0 0; width: 48%;
+  -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%);
+          mask-image: linear-gradient(to right, #000 50%, transparent 100%);
+}
+.fi-media img {
+  width: 100%; height: 100%; object-fit: cover; object-position: 35% center;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+}
+.fi-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(244,246,249,.7), rgba(244,246,249,.1)); }
 .fi-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-4); }
 .fi-steps li { display: grid; grid-template-columns: 36px 1fr; gap: var(--space-4); }
 .fi-num { width: 36px; height: 36px; border-radius: 50%; background: var(--teal); color: #fff; font-family: var(--font-display); font-weight: 700; display: grid; place-items: center; }
 .fi-steps h3 { font-size: var(--text-md); }
 .fi-steps p { color: var(--text-2); font-size: var(--text-sm); margin-top: var(--space-1); }
-@media (max-width: 960px) { .fi { grid-template-columns: 1fr; gap: var(--space-10); } }
+@media (max-width: 960px) {
+  .fi { grid-template-columns: 1fr; gap: var(--space-10); }
+  /* Une colonne : la photo passe en tête de section, pleine largeur, fondue vers le bas. */
+  .fi-media { position: relative; inset: auto; width: auto; height: 260px; margin: calc(-1 * var(--space-24)) 0 var(--space-8); -webkit-mask-image: none; mask-image: none; }
+  .fi-media img { -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%); mask-image: linear-gradient(to bottom, #000 40%, transparent 100%); }
+  .fi-media::after { background: linear-gradient(180deg, rgba(244,246,249,.1), rgba(244,246,249,.5)); }
+}
 
 /* ───────────── 6. CADEALER 2 — FAQ ───────────── */
 .faq { display: grid; grid-template-columns: 1fr 1.6fr; gap: var(--space-16); align-items: start; }
@@ -535,6 +564,8 @@ button { cursor: pointer; }
 .ref-logos { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); }
 .ref-logos img { height: 26px; width: auto; max-width: 110px; object-fit: contain; filter: grayscale(100%); opacity: .7; transition: filter .2s, opacity .2s; }
 .ref-logos img:hover { filter: none; opacity: 1; }
+.ref-logos img.lg { height: 40px; } /* logos carrés ou empilés, illisibles à 26px */
+.ref-logos + .ref-note { margin-top: var(--space-4); }
 .ref-text { font-family: var(--font-display); font-weight: 700; color: var(--text-3); }
 .ref-note { color: var(--text-2); font-size: var(--text-sm); }
 
