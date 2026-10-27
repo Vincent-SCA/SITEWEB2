@@ -1,4 +1,5 @@
 Options -Indexes
+ErrorDocument 404 /404.html
 RewriteEngine On
 
 # Redirect .html and .php URLs to clean URLs (301 permanent)

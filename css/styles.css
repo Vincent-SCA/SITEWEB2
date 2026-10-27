@@ -574,3 +574,16 @@ button { cursor: pointer; }
   .industry-flip .industry-media { order: 0; }
   .industry-body { margin-top: var(--space-6); }
 }
+
+/* ───────────── 10. PAGES LÉGALES ───────────── */
+/* Texte long (politique de confidentialité, conditions) : colonne de lecture étroite. */
+.legal { max-width: 72ch; }
+.legal h2 { font-size: var(--text-xl); }
+.legal h3 { margin-top: var(--space-8); }
+.legal h2 + p, .legal h3 + p { margin-top: var(--space-3); }
+.legal p { color: var(--text-2); }
+.legal p + p { margin-top: var(--space-4); }
+.legal p + h2, .legal ul + h2 { margin-top: var(--space-12); }
+.legal ul { list-style: disc; padding-left: 1.4rem; margin-top: var(--space-3); color: var(--text-2); }
+.legal li + li { margin-top: var(--space-2); }
+.legal ul + p { margin-top: var(--space-4); }

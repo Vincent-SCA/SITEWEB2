@@ -65,6 +65,8 @@ if (empty($_SERVER['HTTP_USER_AGENT']) || preg_match('/bot|crawl|spider/i', $_SE
 
 // Limite : une soumission par minute par adresse IP. On lit la DERNIÈRE
 // soumission de l'IP (V2 lisait la première, donc la limite ne jouait qu'une fois).
+// Les entrées de plus de 24 h sont purgées à chaque écriture : c'est la durée
+// de conservation annoncée dans la politique de confidentialité.
 $ip = $_SERVER['REMOTE_ADDR'] ?? '';
 $now = time();
 $logFile = __DIR__ . '/form_submissions.log';
@@ -72,7 +74,11 @@ $log = is_file($logFile) ? file_get_contents($logFile) : '';
 if (preg_match_all('/^' . preg_quote($ip, '/') . '\t(\d+)$/m', $log, $m) && $now - (int)end($m[1]) < 60) {
     fail('Veuillez patienter une minute avant de soumettre à nouveau.');
 }
-file_put_contents($logFile, "$ip\t$now\n", FILE_APPEND | LOCK_EX);
+$kept = array_filter(explode("\n", $log), function ($line) use ($now) {
+    return preg_match('/\t(\d+)$/', $line, $t) && $now - (int)$t[1] < 86400;
+});
+$kept[] = "$ip\t$now";
+file_put_contents($logFile, implode("\n", $kept) . "\n", LOCK_EX);
 
 // Champs. Le courriel part en texte brut : pas d'échappement HTML, mais on
 // retire les retours de ligne des champs d'une ligne.

@@ -24,5 +24,6 @@ if (file_exists(__DIR__ . rtrim($uri, '/') . '.php')) {
     exit;
 }
 
+// Page 404 du site (en production : ErrorDocument dans .htaccess)
 http_response_code(404);
-echo "404 - Page non trouvée : " . htmlspecialchars($uri);
+include __DIR__ . '/404.html';
