@@ -1,6 +1,6 @@
 <?php
-// send_email.php — reçoit les formulaires Démo et Contact (js/form.js) et les
-// envoie à info@solutions-ca.com. Répond "success" ou un message d'erreur en
+// send_email.php — reçoit le formulaire Démo (js/form.js) et l'envoie à
+// info@solutions-ca.com. Répond "success" ou un message d'erreur en
 // texte brut, affiché tel quel sous le formulaire.
 //
 // La clé secrète reCAPTCHA vit dans config.php, exclu de Git (le dépôt est
@@ -86,7 +86,7 @@ function field(string $name): string {
     return trim(str_replace(["\r", "\n"], ' ', (string)($_POST[$name] ?? '')));
 }
 
-$formType   = field('form_type') === 'demo' ? 'demo' : 'contact';
+if (field('form_type') !== 'demo') fail('Formulaire inconnu.');
 $firstName  = field('firstName');
 $lastName   = field('lastName');
 $phone      = field('phoneNumber');
@@ -96,8 +96,7 @@ $jobTitle   = field('jobTitle');
 $numUsers   = field('numUsers');
 $comments   = trim((string)($_POST['comments'] ?? ''));
 
-$required = [$firstName, $lastName, $phone, field('email'), $comments];
-if ($formType === 'demo') $required[] = $dealerName;
+$required = [$firstName, $lastName, $phone, field('email'), $dealerName, $comments];
 if (in_array('', $required, true)) {
     fail('Veuillez remplir tous les champs obligatoires.');
 }
@@ -112,11 +111,9 @@ foreach ($blacklist as $word) {
     }
 }
 
-$subject = $formType === 'demo'
-    ? "Demande de démo : $dealerName"
-    : 'Nouveau message via solutions-ca.com';
+$subject = "Demande de démo : $dealerName";
 
-$body  = ($formType === 'demo' ? "Nouvelle demande de démo\n\n" : "Nouveau message du formulaire de contact\n\n");
+$body  = "Nouvelle demande de démo\n\n";
 $body .= "Nom : $firstName $lastName\n";
 $body .= "Téléphone : $phone\n";
 $body .= "Courriel : $email\n";

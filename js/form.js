@@ -1,4 +1,4 @@
-// js/form.js — formulaires Démo et Contact (même script, même /send_email).
+// js/form.js — formulaire Démo (envoi à /send_email).
 // Validation en ligne, jeton reCAPTCHA v3, envoi en fetch, puis remplacement du
 // formulaire par le message de confirmation. Les messages d'erreur sont affichés
 // sous le champ ou en bas du formulaire, jamais en alert().

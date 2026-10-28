@@ -7,6 +7,9 @@ RewriteCond %{REQUEST_METHOD} =GET
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.(html|php)[\s?] [NC]
 RewriteRule ^ /%1 [R=301,L]
 
+# L'ancienne page Contact (retirée le 2026-10-28) renvoie vers Démo
+RewriteRule ^contact/?$ /demo [R=301,L]
+
 # Internally serve .html file when clean URL is requested
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
