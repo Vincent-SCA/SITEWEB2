@@ -1,10 +1,12 @@
 // js/lightbox.js — agrandissement des captures au clic (page Analytics).
 // Cible les jauges de la section Objectifs (.shot-grid img), les rend accessibles au
 // clavier (Entrée / Espace) et les ouvre dans un <dialog> natif.
-//   - À l'ouverture, l'image est ajustée à l'écran en gardant ses proportions
-//     (échelle « 100 % » = la plus grande taille qui tient dans la fenêtre).
-//   - Zoom : boutons − / + / Ajuster, touches − / + / 0, Ctrl + molette, double-clic.
-//     Au-delà de l'écran, la zone défile (glisser ou barres de défilement).
+//   - À l'ouverture, l'image s'affiche à sa taille réelle (100 % = un pixel de
+//     l'image pour un pixel d'écran, donc aucune perte de netteté), réduite
+//     seulement si elle ne tient pas dans la fenêtre, en gardant ses proportions.
+//   - Zoom : boutons − / +, touches − / +, Ctrl + molette, double-clic. Le bouton
+//     du milieu bascule entre « taille réelle » et « ajusté à l'écran ». Au-delà
+//     de l'écran, la zone défile (glisser ou barres de défilement).
 //   - Fermeture : Échap, clic sur le fond, bouton Fermer. Flèches ← → pour
 //     passer d'une image à l'autre. Les images masquées par le CSS (bandes
 //     larges sur mobile) sont ignorées.
@@ -13,7 +15,7 @@
   const all = Array.from(document.querySelectorAll('.shot-grid img'));
   if (!all.length) return;
 
-  const STEP = 1.25, ZOOM_MIN = 0.5, ZOOM_MAX = 5;
+  const STEP = 1.25, ZOOM_MIN = 0.25, ZOOM_MAX = 4;
 
   const svg = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>';
   const icon = {
@@ -36,7 +38,7 @@
       '<figcaption></figcaption>' +
       '<div class="lb-tools" role="group" aria-label="Zoom">' +
         '<button type="button" class="lb-btn lb-out" aria-label="Réduire">' + icon.minus + '</button>' +
-        '<button type="button" class="lb-btn lb-fit" title="Ajuster à l’écran">100 %</button>' +
+        '<button type="button" class="lb-btn lb-fit" title="Taille réelle / ajuster à l’écran">100 %</button>' +
         '<button type="button" class="lb-btn lb-in" aria-label="Agrandir">' + icon.plus + '</button>' +
       '</div>' +
     '</figure>';
@@ -48,8 +50,8 @@
   const fitBtn = dlg.querySelector('.lb-fit');
   let list = [];
   let index = 0;
-  let fit = 1;   // échelle qui ajuste l'image à la scène
-  let zoom = 1;  // multiple de l'échelle d'ajustement
+  let fit = 1;   // échelle qui ajuste l'image entière à la scène
+  let zoom = 1;  // échelle affichée : 1 = taille réelle de l'image
 
   // Échelle « ajustée » : la plus grande qui fait tenir l'image entière dans la scène.
   function fitScale() {
@@ -58,8 +60,11 @@
     return Math.min(w / lbImg.naturalWidth, h / lbImg.naturalHeight);
   }
 
+  // Échelle par défaut : taille réelle, ou ajustée si l'image déborde de la scène.
+  function defaultZoom() { return Math.min(1, fit); }
+
   function apply(keepCenter) {
-    const s = fit * zoom;
+    const s = zoom;
     const w = Math.round(lbImg.naturalWidth * s), h = Math.round(lbImg.naturalHeight * s);
     const oldW = lbImg.offsetWidth;
     const cx = stage.scrollLeft + stage.clientWidth / 2, cy = stage.scrollTop + stage.clientHeight / 2;
@@ -91,7 +96,7 @@
 
   function onLoaded() {
     fit = fitScale();
-    zoom = 1;
+    zoom = defaultZoom();
     apply(false);
   }
   lbImg.addEventListener('load', onLoaded);
@@ -121,8 +126,10 @@
   dlg.querySelector('.lb-next').addEventListener('click', () => show(index + 1));
   dlg.querySelector('.lb-out').addEventListener('click', () => setZoom(zoom / STEP));
   dlg.querySelector('.lb-in').addEventListener('click', () => setZoom(zoom * STEP));
-  fitBtn.addEventListener('click', () => setZoom(1));
-  lbImg.addEventListener('dblclick', () => setZoom(zoom > 1.001 ? 1 : 2));
+  // Bascule taille réelle ↔ ajusté à l'écran (utile quand l'image déborde ou est petite).
+  const toggleFit = () => setZoom(Math.abs(zoom - 1) < 0.001 ? fit : 1);
+  fitBtn.addEventListener('click', toggleFit);
+  lbImg.addEventListener('dblclick', toggleFit);
 
   // Ctrl + molette (ou pincement sur pavé tactile) : zoom au lieu du zoom de page.
   stage.addEventListener('wheel', e => {
@@ -160,7 +167,9 @@
   });
   window.addEventListener('resize', () => {
     if (!dlg.open || !lbImg.naturalWidth) return;
+    const wasDefault = Math.abs(zoom - defaultZoom()) < 0.001;
     fit = fitScale();
+    if (wasDefault) zoom = defaultZoom();
     apply(false);
   });
   dlg.addEventListener('close', () => {
