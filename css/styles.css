@@ -3,7 +3,7 @@
    Un seul fichier, organisé en couches :
    1. Tokens   2. Base   3. Composants partagés   4. Header / Footer
    5. Accueil  6. CADealer 2  7. À propos  8. Démo  9. Industries
-   10. Pages légales  11. Heros centrés  12. Analytics
+   10. Pages légales  11. Heros centrés  12. Analytics  13. Accueil inversé
    Règle de couleur : marine = texte et bandes sombres ; teal = l'unique
    accent (CTA, liens, icônes). Pas d'autre couleur d'accent.
    ===================================================================== */
@@ -679,4 +679,42 @@ html.lb-open { overflow: hidden; }
   .lb-btn { width: 38px; height: 38px; }
   .lb-prev { left: var(--space-2); }
   .lb-next { right: var(--space-2); }
+}
+
+/* ───────────── 13. ACCUEIL — HERO CLAIR + MODULES EN MARINE ───────────── */
+/* Variante inversée de l'accueil : le hero passe en blanc, la section Modules prend la marine. */
+.hero-light { background: var(--bg); color: var(--text); }
+.hero-light .hero-media { opacity: 1; }
+.hero-light .hero-media::after { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.3)); }
+.hero-light h1 { color: var(--navy); }
+.hero-light p.lede { color: var(--text-2); }
+.hero-light .btn-ghost { color: var(--teal); border-color: var(--teal); }
+.hero-light .btn-ghost:hover { background: var(--teal-soft); color: var(--teal-hover); border-color: var(--teal); }
+.hero-light .hero-facts { border-top-color: var(--line); background: rgba(255,255,255,.72); }
+.hero-light .hero-facts li { border-right-color: var(--line); }
+.hero-light .hero-facts strong { color: var(--navy); }
+.hero-light .hero-facts span { color: var(--text-2); }
+@media (max-width: 960px) {
+  .hero-light .hero-media { opacity: .6; }
+  .hero-light .hero-facts li { border-bottom-color: var(--line); }
+}
+
+.section-navy { background: var(--navy); color: var(--on-dark); }
+.section-navy h2 { color: #fff; }
+.section-navy .section-head p { color: var(--on-dark-2); }
+.section-navy .modules-foot p { color: var(--on-dark-2); }
+.section-navy .modules-foot p a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.section-navy .btn-outline { color: #fff; border-color: rgba(255,255,255,.35); }
+.section-navy .btn-outline:hover { background: rgba(255,255,255,.08); border-color: #fff; color: #fff; }
+/* Grand écran : la photo couvre tout le hero, avec un voile blanc dégradé à gauche
+   pour garder le titre lisible. Sur mobile, la règle de la section 5 s'applique. */
+@media (min-width: 961px) {
+  .hero-light .hero-media {
+    width: 100%; inset: 0;
+    background-position: 70% center;
+    -webkit-mask-image: none; mask-image: none;
+  }
+  .hero-light .hero-media::after {
+    background: linear-gradient(90deg, rgba(255,255,255,.6) 0%, rgba(255,255,255,.35) 38%, rgba(255,255,255,.05) 62%, rgba(255,255,255,0) 100%);
+  }
 }
